@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>maven</groupId>
+    <artifactId>repo</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <github.global.server>github</github.global.server>
+        <base.path>${project.build.directory}</base.path>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>file://${base.path}/releasees</url>
+        </repository>
+        <!--<snapshotRepository>-->
+            <!--<id>snapshots</id>-->
+            <!--<url>file://${base.path}/snapshots</url>-->
+        <!--</snapshotRepository>-->
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <!--编译现有程序的jar-->
+            <!--<plugin>-->
+                <!--<artifactId>maven-deploy-plugin</artifactId>-->
+                <!--<version>2.8.1</version>-->
+                <!--<configuration>-->
+                    <!--<altDeploymentRepository>releases::default::file://${base.path}-->
+                    <!--</altDeploymentRepository>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.11</version>
+                <configuration>
+                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                    <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                    <outputDirectory>${base.path}</outputDirectory> <!-- matches distribution management repository url above -->
+                    <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                    <repositoryName>maven</repositoryName>      <!-- github repo name -->
+                    <repositoryOwner>chairv</repositoryOwner>    <!-- github username  -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+        <extensions>
+            <extension>
+                <artifactId>wagon-webdav-jackrabbit</artifactId>
+                <groupId>org.apache.maven.wagon</groupId>
+                <version>2.2</version>
+            </extension>
+        </extensions>
+    </build>
+</project>
